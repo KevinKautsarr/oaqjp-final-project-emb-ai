@@ -8,17 +8,22 @@ def emotion_detector(text_to_analyze):
     
     response = requests.post(url, json=myobj, headers=header)
     
-    # Task 3: Mengubah teks response menjadi dictionary
+    # Menangani input kosong (Error 400)
+    if response.status_code == 400:
+        return {
+            'anger': None,
+            'disgust': None,
+            'fear': None,
+            'joy': None,
+            'sadness': None,
+            'dominant_emotion': None
+        }
+    
     formatted_response = json.loads(response.text)
-    
-    # Mengekstrak set emosi yang diminta
     emotions = formatted_response['emotionPredictions'][0]['emotion']
-    
-    # Logika untuk mencari emosi dominan (skor tertinggi)
     dominant_emotion = max(emotions, key=emotions.get)
     
-    # Menyusun output sesuai format yang diminta
-    result = {
+    return {
         'anger': emotions['anger'],
         'disgust': emotions['disgust'],
         'fear': emotions['fear'],
@@ -26,5 +31,3 @@ def emotion_detector(text_to_analyze):
         'sadness': emotions['sadness'],
         'dominant_emotion': dominant_emotion
     }
-    
-    return result
